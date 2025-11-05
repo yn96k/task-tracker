@@ -16,7 +16,7 @@
 ## Документация
 
 - [User Story Map]()
-- [User Stories]()
+- [User Stories](https://github.com/yn96k/task-tracker/blob/main/user%20stories.md)
 - [Use Cases]()
 - [C4 диаграмма]()
 - [Схемы баз данных]()
