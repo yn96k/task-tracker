@@ -1,4 +1,5 @@
-<img width="2159" height="2062" alt="image" src="https://github.com/user-attachments/assets/ebcc9e23-81fa-4584-a459-7fd17eb0707a" />
+<img width="6448" height="7380" alt="image" src="https://github.com/user-attachments/assets/c0dc8d96-2ca5-478b-8657-10defb52f74f" />
+
 
 ```plantuml
 @startuml "task_tracker_MSA"
@@ -30,10 +31,6 @@ System_Boundary(c1, "Трекер задач") {
         Container(files_sv, "Сервис вложений", "SpringBoot")
         ContainerDb(files_db, "БД сервиса вложений", "MinIO")
     }
-    Container_Boundary(analytics_b, "Сервис аналитики") {
-        Container(analytics_sv, "Сервис аналитики", "SpringBoot")
-        ContainerDb(analytics_db, "БД сервиса аналитики", "PostgreSQL")
-    }
     Container_Boundary(notifs_b, "Сервис уведомлений") {
         Container(notifs_sv, "Сервис уведомлений", "SpringBoot")
         ContainerDb(notifs_db, "БД сервиса уведомлений", "PostgreSQL")
@@ -44,7 +41,6 @@ Rel_D(users_sv, users_db, "")
 Rel_D(tasks_sv, tasks_db, "")
 Rel_D(search_sv, search_db, "")
 Rel_D(files_sv, files_db, "запрашивает файлы при наличии прав доступа")
-Rel_D(analytics_sv, analytics_db, "")
 Rel_D(notifs_sv, notifs_db, "")
 
 Rel(teammate, app, "вносит изменения в задачи, просматривает задачи на исполнении", "https")
@@ -55,14 +51,10 @@ BiRel(api_gateway, users_sv, "запрашивает и записывает д�
 BiRel(api_gateway, tasks_sv, "запрашивает и записывает данные о задачах", "https")
 BiRel(api_gateway, search_sv, "отправляет поисковые запросы и получает сведения", "https")
 BiRel(api_gateway, files_sv, "запрашивает и записывает файлы, устанавливает права доступа", "https")
-BiRel(api_gateway, analytics_sv, "запрашивает и записывает аналитические данные", "https")
 BiRel(api_gateway, notifs_sv, "запрашивает и записывает новые уведомления", "https")
 
 Rel(tasks_sv,search_sv,"сообщает о событиях в БД задач, предоставляет весь текст, комментарии и теги для индексации", "https")
 Rel(tasks_sv,notifs_sv,"сообщает о событиях в БД задач, ставит уведомления участникам задачи", "https")
-
-Rel_D(tasks_sv,analytics_sv,"записывает данные обо всех изменениях", "https")
-Rel_D(users_sv,analytics_sv,"записывает данные обо всех изменениях", "https")
 
 @enduml
 ```
