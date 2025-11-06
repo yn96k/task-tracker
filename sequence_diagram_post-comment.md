@@ -1,7 +1,7 @@
 <img width="3553" height="2156" alt="image" src="https://github.com/user-attachments/assets/1cf8f655-e314-41e0-88f4-d61cbc7a3a6c" />
 
 
-```
+```plantuml
 title "Оставление комментария POST /task/comment/"
 
 actor user as "Пользователь"
