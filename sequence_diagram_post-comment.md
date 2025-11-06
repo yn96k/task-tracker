@@ -1,4 +1,5 @@
-<img width="3830" height="2368" alt="image" src="https://github.com/user-attachments/assets/f72aa18e-074a-4c24-a491-0353369f1b3c" />
+<img width="3553" height="2156" alt="image" src="https://github.com/user-attachments/assets/1cf8f655-e314-41e0-88f4-d61cbc7a3a6c" />
+
 
 ```
 title "Оставление комментария POST /task/comment/"
@@ -9,6 +10,7 @@ participant apiGateway as "API Gateway"
 participant taskService as "Сервис задач"
 database taskService_db as "БД сервиса задач"
 participant notifService as "Сервис уведомлений"
+participant searchService as "Сервис поиска"
 
 user -> apiGateway++: Запрос с текстом комментария
 apiGateway -> apiGateway: Аутентификация
@@ -20,6 +22,8 @@ alt case "Проверка прошла успешно"
     taskService <- taskService_db--: Подтверждение записи
     taskService -> notifService++: Отправка события
     taskService <- notifService--: Подтверждение
+    taskService -> searchService++: Отправка события для переиндексации
+    taskService <- searchService--: Подтверждение
     apiGateway <- taskService: Подтверждение записи комментария
     user <- apiGateway: Подтверждение записи комментария
 else case "Недосточно прав доступа"
