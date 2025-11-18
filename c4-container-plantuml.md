@@ -1,7 +1,7 @@
 <img width="1983" height="3680" alt="image" src="https://github.com/user-attachments/assets/8ddb4489-be0b-43b9-a278-a795c932c2ec" />
 
 
-```yaml
+```plantuml
 @startuml "task_tracker_MSA"
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
