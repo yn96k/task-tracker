@@ -1,45 +1,32 @@
-<img width="1983" height="3680" alt="image" src="https://github.com/user-attachments/assets/8ddb4489-be0b-43b9-a278-a795c932c2ec" />
-
+<img width="1412" height="572" alt="image" src="https://github.com/user-attachments/assets/141e2a83-fadf-4a09-84de-481d116ef4f3" />
 
 ```yaml
-@startuml "task_tracker_MSA"
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+@startuml
 
-SHOW_PERSON_OUTLINE()
+!define Table(name,desc) entity name as "desc" << (T,#FFAAAA) >>
+title Сервис задач
 
-Person(user, "Пользователь", "Манипулирует своими задачами, ставит и получает уведомления")
-
-System_Boundary(c1, "Трекер задач") {
-    Container(app, "Веб-приложение", "React JS")
-    
-    Container(api_gateway, "API Gateway", "nginx + OAuth 2.0")
-
-    Container_Boundary(users_b,"Сервис пользователей") {
-        Container(users_sv, "Сервис пользователей", "SpringBoot", "Хранит данные о пользователях")
-        ContainerDb(users_db, "БД сервиса пользователей", "PostgreSQL")
-    }
-    Container_Boundary(tasks_b, "Сервис задач") {
-        Container(tasks_sv, "Сервис задач", "SpringBoot", "Хранит данные о задачах, сроках и тегах")
-        ContainerDb(tasks_db, "БД сервиса задач", "PostgreSQL")
-    }
-    Container_Boundary(notifs_b, "Сервис уведомлений") {
-        Container(notifs_sv, "Сервис уведомлений", "SpringBoot")
-        ContainerDb(notifs_db, "БД сервиса уведомлений", "PostgreSQL")
-    }
+Table(Task, "Task (Задачи)") {
+  task_id : INT PK
+  --
+  title: VARCHAR(50) NOT NULL (Название задачи)
+  description: TEXT NOT NULL (Описание задачи)
+  deadline: TIMESTAMP (Крайний срок выполнения)
 }
 
-Rel_D(users_sv, users_db, "")
-Rel_D(tasks_sv, tasks_db, "")
-Rel_D(notifs_sv, notifs_db, "")
+Table(Tag, "Tag (Теги)") {
+  tag_id : INT PK
+  --
+  name: VARCHAR(20) NOT NULL (Название тега)
+  color: VARCHAR(8) NOT NULL DEFAULT "0x000000" (Цвет тега)
+}
 
-Rel(user, app, "вносит изменения в задачи, просматривает задачи, получает уведомления", "https")
-BiRel(app, api_gateway, "направляет все запросы и получает ответы, передает данные для аутентификации", "https")
+Table(Task_Tag, "Task_Tag (Связка тега и задачи)") {
+  task_id: INT PK FK(Task.task_id) (ID задачи)
+  tag_id: INT PK FK(Tag.tag_id) (ID тега)
+}
 
-BiRel(api_gateway, users_sv, "запрашивает и записывает данные о пользователе", "https")
-BiRel(api_gateway, tasks_sv, "запрашивает и записывает данные о задачах", "https")
-BiRel(api_gateway, notifs_sv, "запрашивает и записывает новые уведомления", "https")
-
-Rel(tasks_sv,notifs_sv,"сообщает о событиях в БД задач, ставит уведомления участникам задачи", "https")
-
+Task ||--o{ Task_Tag : "1:M"
+Tag ||--o{ Task_Tag : "1:M"
 @enduml
 ```
