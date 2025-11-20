@@ -1,0 +1,226 @@
+openapi: 3.0.3
+
+info:
+  title: Приложение для трекинга задач
+  version: 1.0.0
+
+paths:
+  /user/{user_id}/task/:
+    post:
+      tags:
+        - tasks
+      summary: Создать задачу
+      description: Метод для создания новой задачи
+      operationId: createTask
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/X-Idempotency-Key'
+        - $ref: '#/components/parameters/UserIdParam'
+        
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/CreateTaskSchema'
+              
+      responses:
+        201:
+          description: Created 
+        401:
+          $ref: '#/components/responses/Error'
+        404:
+          $ref: '#/components/responses/Error'
+        500:
+          $ref: '#/components/responses/Error'
+          
+    get:
+      tags:
+        - tasks
+      summary: Поиск задач
+      description: Метод для поиска всех задач, удовлетворяющих условиям поиска
+      operationId: searchTasks
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/X-Idempotency-Key'
+        - $ref: '#/components/parameters/UserIdParam'
+        - name: keywords
+          in: query
+          schema: 
+            type: string
+          description: Ключевые слова в виде одной строки
+        - name: tags
+          in: query
+          schema:
+            $ref: '#/components/schemas/Tags'
+            
+      responses:
+        200:
+          description: Результаты поиска
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+        401:
+          $ref: '#/components/responses/Error'
+        404:
+          $ref: '#/components/responses/Error'
+        500:
+          $ref: '#/components/responses/Error'
+          
+security:
+  - bearerAuth: []  
+  
+components:
+
+  securitySchemes:
+  
+    bearerAuth: 
+      type: http 
+      scheme: bearer 
+      bearerFormat: JWT
+    
+  parameters:
+    
+    X-Idempotency-Key:
+      name: X-Idempotency-Key
+      in: header
+      required: true
+      description: Ключ идемпотентности
+      schema:
+        type: string
+    
+    UserIdParam:   
+      name: user_id
+      in: path
+      required: true
+      description: UUID пользователя
+      schema:
+        $ref: '#/components/schemas/UserId'
+  
+  responses:
+  
+    Error:
+      description: Error 
+      content: 
+        application/json: 
+          schema: 
+            $ref: '#/components/schemas/ErrorResponse'
+                
+  schemas:
+
+    CreateTaskSchema:
+      required:
+      - userId
+      - title
+      - description
+      type: object
+      properties:
+        userId:
+          $ref: '#/components/schemas/UserId'
+        title:
+          $ref: '#/components/schemas/Title'
+        description:
+          $ref: '#/components/schemas/Description'
+        deadline:
+          $ref: '#/components/schemas/Deadline'
+        Tags:
+          $ref: '#/components/schemas/Tags'
+
+    SearchResults:
+      required:
+        - tasks
+      type: object
+      properties:
+        tasks:
+          type: array
+          description: Массив задач, подпадающих под условия поиска
+          items:
+              $ref: '#/components/schemas/TaskInRespond'
+              
+    TaskInRespond:
+      required:
+      - title
+      - description
+      - createdAt
+      type: object
+      properties:
+        title:
+          $ref: '#/components/schemas/Title'
+        description:
+          $ref: '#/components/schemas/Description'
+        deadline:
+          $ref: '#/components/schemas/Deadline'
+        Tags:
+          $ref: '#/components/schemas/Tags'
+        CreatedAt:
+          $ref: '#/components/schemas/CreatedAt'
+
+    UserId:
+      type: string
+      format: uuid
+      description: UUID пользователя
+      
+    Title:
+      type: string
+      description: Название задачи
+      example: Прочитать главу книги
+    
+    Description:
+      type: string
+      description: Описание задачи
+      example: Прочитать главу из книги, кратко ее законспектировать
+    
+    Deadline:
+      type: string
+      format: date-time
+      description: Крайний срок задачи
+      example: '2025-11-22T22:30:00Z'
+    
+    Tags:
+      type: array
+      items:
+        type: string
+      description: Теги задачи
+      example: ['ежедневное','не срочное','чтение']
+      
+    CreatedAt:
+      type: string
+      format: date-time
+      description: Дата создания задачи
+      example: '2025-11-22T22:30:00Z'
+    
+    ErrorResponse: 
+      description: Ответ сервера с ошибкой 
+      type: object 
+      required: 
+        - errorId 
+        - errorCode 
+        - errorMessage 
+      properties: 
+        errorId: 
+          description: Идентификатор ошибки
+          type: string 
+          minLength: 16 
+          maxLength: 16 
+          example: 02d58bace05e461f0 
+        errorCode: 
+          description: Код ошибки сервиса 
+          type: string 
+          minLength: 1 
+          maxLength: 12 
+          example: InsufficientPrivileges 
+        errorMessage: 
+          description: Сообщение ошибки сервиса 
+          type: string 
+          minLength: 1 
+          example: Internal Server Error 
+        errorDetails: 
+          description: Детали ошибки
+          type: object
+          
+          
+          
+          
