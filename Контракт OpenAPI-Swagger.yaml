@@ -1,4 +1,3 @@
-```yaml
 openapi: 3.0.3
 
 info:
@@ -220,4 +219,3 @@ components:
         errorDetails: 
           description: Детали ошибки
           type: object
-```
