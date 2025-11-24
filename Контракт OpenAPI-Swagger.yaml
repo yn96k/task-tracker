@@ -1,3 +1,4 @@
+```yaml
 openapi: 3.0.3
 
 info:
@@ -44,7 +45,6 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/X-Idempotency-Key'
         - $ref: '#/components/parameters/UserIdParam'
         - name: keywords
           in: query
@@ -220,7 +220,4 @@ components:
         errorDetails: 
           description: Детали ошибки
           type: object
-          
-          
-          
-          
+```
